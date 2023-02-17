@@ -1,7 +1,13 @@
-echo "git automation script"
 #  This script will automate everything based on default setting
-read -p "Do you have repo initiatlised? [y/n]: " input
-
+echo "git automation script"
+echo 'OR you can just commit by pressing "c"'
+read -p "Do you have repo initiatlised? [y/n] || [c]: " input
+if [ "$input" == "c" ]; then
+  echo "commiting to current branch"
+  git add .
+  read -p "Please enter your commit: " commit
+  git commit -m "$commit"
+fi
 if [ "$input" == "y" ]; then
   echo "Proceeding with the script."
   git add .
@@ -9,7 +15,6 @@ if [ "$input" == "y" ]; then
   git commit -m "$commit"
 #   read -p "Please enter branch to commit: " branch
 #   git push -u origin $master
-git push 
 else
   echo "Initializing Repo."
   git init
