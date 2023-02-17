@@ -1,23 +1,10 @@
 #!/usr/bin/env node
 
-import boxen from 'boxen';
-import chalk from 'chalk';
-import { display } from './utils/display';
-import { argument } from './cli/argument';
-import type { DisplayValue } from './types/static-types';
+import { argChecker } from './cli/argument';
+import type { Path } from './types/static-types';
 
-await argument();
+// npm directory file location
+const MainPath: Path = process.env.APPDATA;
 
-const message = chalk.green('Welcome 🙌 to "Template Master"');
-// function to print welcome message
-function console(Value: DisplayValue) {
-  const consoleDisplay = display.log(
-    boxen(Value, {
-      padding: 1,
-      borderColor: 'green',
-      margin: 1,
-    }),
-  );
-  return consoleDisplay;
-}
-console(message);
+// function to get argument from cli and print output
+argChecker(MainPath);
