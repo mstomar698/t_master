@@ -1,5 +1,5 @@
 {
-  "name": "aid",
+  "name": "t_master",
   "version": "1.0.0",
   "description": "Get all basic necessities in sinle CLI tool",
   "scripts": {
@@ -25,7 +25,7 @@
   "license": "MIT",
   "type": "module",
   "bin": {
-    "aid": "./build/main.js"
+    "t_master": "./build/main.js"
   },
   "files": [
     "build/"
