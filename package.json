@@ -1,6 +1,6 @@
 {
-  "name": "tm",
-  "version": "0.0.1",
+  "name": "aid",
+  "version": "1.0.0",
   "description": "Get all basic necessities in sinle CLI tool",
   "scripts": {
     "dev": "tsx watch ./src/main.ts",
@@ -25,7 +25,7 @@
   "license": "MIT",
   "type": "module",
   "bin": {
-    "tm": "./build/main.js"
+    "aid": "./build/main.js"
   },
   "files": [
     "build/"

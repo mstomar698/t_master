@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { display } from './utils/display';
 
 function add(a: number, b: number) {
