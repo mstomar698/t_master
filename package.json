@@ -1,6 +1,6 @@
 {
   "name": "t_master",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Get all basic necessities in sinle CLI tool",
   "scripts": {
     "dev": "tsx watch ./src/main.ts",
