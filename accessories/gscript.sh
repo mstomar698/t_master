@@ -7,8 +7,9 @@ if [ "$input" == "y" ]; then
   git add .
   read -p "Please enter your commit: " commit
   git commit -m "$commit"
-  read -p "Please enter branch to commit: " branch
-  git push -u origin $master
+#   read -p "Please enter branch to commit: " branch
+#   git push -u origin $master
+git push 
 else
   echo "Initializing Repo."
   git init
