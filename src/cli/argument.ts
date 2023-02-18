@@ -2,20 +2,26 @@
 
 import { display, close, template } from '../utils';
 import manifest from '../../package.json';
-import { args, console, getHelpText, npmInstaller } from './cli';
-import type { Path } from '../types/static-types';
+import { args, console, getHelpText, script } from './cli';
 
-export const argChecker = (path: Path) => {
+export const argChecker = () => {
   if (args[0] === '--help') {
     display.log(getHelpText());
     close(0);
   } else if (args[0] === '--version') {
     display.log(manifest.version);
     close(0);
+  } else if (args[0] === '--tailwind') {
+    script('t');
+    close(0);
+  } else if (args[0] === '--nextjs') {
+    script('n');
+    close(0);
+  } else if (args[0] === '--git') {
+    script('g');
+    close(0);
   } else if (args.length > 1) {
     if (typeof args[0] === 'string') {
-      display.log(path)
-      display.log(npmInstaller('arg',''))
       display.log(args);
       close(0);
     }
