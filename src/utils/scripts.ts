@@ -3,8 +3,7 @@
 import axios from 'axios';
 
 export const script = async (address: string): Promise<unknown> => {
-  // const url = `https://t-master-mstomar698.vercel.app/${address}script.sh`;
-  const url = `http://localhost:3000/${address}script.sh`;
+  const url = `https://t-master-mstomar698.vercel.app/${address}script.sh`;
   const response = await axios.get(url);
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return response.data;
