@@ -49,6 +49,79 @@ export const git = () => {
   );
 };
 
+export const gitDefaultBranchCommit = () => {
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+  display.log('commiting to current branch');
+  execSync('git add .');
+  rl.question('Please enter your commit: ', (commit: string) => {
+    execSync(`git commit -m "${commit}"`);
+    execSync('git push');
+    rl.close();
+  });
+};
+
+export const gitDefaultCommit = () => {
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+  display.log('commiting to current branch');
+  execSync('git add .');
+  rl.question('Please enter your commit: ', (commit: string) => {
+    execSync(`git commit -m "${commit}"`);
+    rl.close();
+  });
+};
+
+export const gitDefaultPush = () => {
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+  display.log('give branch if new branch or for first push to default branch');
+  rl.question('on which to commit: ', (branch: string) => {
+    if (branch === '') {
+      display.log('commiting to default branch');
+      execSync(`git push`);
+    } else if (branch === 'new' || branch === 'master' || branch === 'main') {
+      display.log(`creating or pushing to ${branch} branch`);
+      execSync(`git push --set-upstream origin ${branch}`);
+    }
+    rl.close();
+  });
+};
+
+export const gitBranch = () => {
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+  display.log('give branch name to switch or create new one');
+  rl.question(
+    'Create new branch or switch to another one: ',
+    (branch: string) => {
+      if (branch === 'switch' || branch === 'n' || branch === 's') {
+        display.log('Switching to another branch');
+        r1.question('Enter branch name: ', (anotherBranch: string) => {
+          execSync(`git checkout ${anotherBranch}`);
+          rl.close();
+        });
+      } else if (branch === 'new' || branch === 'y') {
+        r1.question('Enter branch name: ', (newBranch: string) => {
+          display.log(`creating new branch  to ${newBranch} branch`);
+          execSync(`git checkout -b ${newBranch}`);
+          execSync('git branch');
+          rl.close();
+        });
+      }
+      rl.close();
+    },
+  );
+};
+
 export const next = () => {
   const rl = readline.createInterface({
     input: process.stdin,

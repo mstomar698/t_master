@@ -6,7 +6,15 @@ import shell from 'shelljs';
 import parseArgv from 'arg';
 import boxen from 'boxen';
 import { commands, template, display, close } from '../utils';
-import { git, next, react, tailwind } from './script-loader';
+import {
+  git,
+  gitDefaultBranchCommit,
+  gitDefaultCommit,
+  gitDefaultPush,
+  next,
+  react,
+  tailwind,
+} from './script-loader';
 import type { Args, DisplayValue, Path } from '../types/static-types';
 import type { Arguments } from '../types/engine-types';
 
@@ -84,27 +92,27 @@ export function console(Value: DisplayValue) {
 }
 
 export function wordChecker(argString: string[]) {
-  let hasReact,
-    hasRust,
-    hasNext,
-    hasCreate,
-    hasMern,
-    hasTailwind,
-    hasExpress,
-    hasPip,
-    hasDjango,
-    hasFlask,
-    hasNpm,
-    hasJavascript,
-    hasTypescript,
-    hasPython,
-    hasWebpack,
-    hasWebAssembly,
-    hasGit,
-    hasCommit,
-    hasPush,
-    hasMongo,
-    hasBranch,
+  let hasReact: boolean,
+    hasRust: boolean,
+    hasNext: boolean,
+    hasCreate: boolean,
+    hasMern: boolean,
+    hasTailwind: boolean,
+    hasExpress: boolean,
+    hasPip: boolean,
+    hasDjango: boolean,
+    hasFlask: boolean,
+    hasNpm: boolean,
+    hasJavascript: boolean,
+    hasTypescript: boolean,
+    hasPython: boolean,
+    hasWebpack: boolean,
+    hasWebAssembly: boolean,
+    hasGit: boolean,
+    hasCommit: boolean,
+    hasPush: boolean,
+    hasMongo: boolean,
+    hasBranch: boolean,
     hasNode = false;
 
   for (let i = 0; i < argString.length; i++) {
@@ -121,6 +129,15 @@ export function wordChecker(argString: string[]) {
     } else if (argString[i]?.toLowerCase() === 'branch') {
       hasBranch = true;
     }
+  }
+
+  if (hasCreate) {
+    runCreateModule();
+  }
+
+  const Git = hasGit || hasCommit || hasPush || hasBranch;
+  if (Git) {
+    runGitCommands();
   }
 
   function runCreateModule() {
@@ -226,31 +243,26 @@ export function wordChecker(argString: string[]) {
         hasBranch = true;
       }
     }
+    // switches for various keywords
     if (hasCommit && hasPush && hasBranch) {
-      display.log('git, commit, push and branch');
+      display.log('Running git manual script..');
+      git();
     } else if (hasCommit && hasPush) {
-      display.log('git, commit and push');
-    } else if (hasCommit && hasBranch) {
-      display.log('git, commit and branch');
-    } else if (hasPush && hasBranch) {
-      display.log('git, push and branch');
+      display.log('Adding, commiting and pushing to default branch');
+      gitDefaultBranchCommit();
     } else if (hasCommit) {
-      display.log('git and commit');
+      display.log('Adding and commiting default branch');
+      gitDefaultCommit();
     } else if (hasPush) {
-      display.log('git and push');
+      display.log('Pushing to default branch');
+      gitDefaultPush();
     } else if (hasBranch) {
-      display.log('git and branch');
+      display.log('switching branch');
+      gitDefaultPush();
     } else {
-      display.log('git');
+      display.log('showing status');
+      shell.exec('git status');
     }
-  }
-
-  if (hasCreate) {
-    runCreateModule();
-  }
-
-  if (hasGit || hasCommit || hasPush || hasBranch) {
-    runGitCommands();
   }
 
   // check cases
