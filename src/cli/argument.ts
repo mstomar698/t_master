@@ -2,7 +2,14 @@
 
 import { display, close, template } from '../utils';
 import manifest from '../../package.json';
-import { args, console, getHelpText, printArgs, script } from './cli';
+import {
+  args,
+  console,
+  getHelpText,
+  printArgs,
+  script,
+  wordChecker,
+} from './cli';
 
 export const argChecker = () => {
   if (args.length === 0) {
@@ -23,6 +30,9 @@ export const argChecker = () => {
       script('r');
     } else if (args[0] === '--git' || args[0] === '-g') {
       script('g');
+    } else {
+      const parsedStringArray: string[] = args[0]?.split(' ') as string[];
+      wordChecker(parsedStringArray);
     }
   } else if (args.length >= 2) {
     display.info('The arumenst passed are:');

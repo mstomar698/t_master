@@ -82,3 +82,205 @@ export function console(Value: DisplayValue) {
   );
   return consoleDisplay;
 }
+
+export function wordChecker(argString: string[]) {
+  let hasReact,
+    hasRust,
+    hasNext,
+    hasCreate,
+    hasMern,
+    hasTailwind,
+    hasExpress,
+    hasPip,
+    hasDjango,
+    hasFlask,
+    hasNpm,
+    hasJavascript,
+    hasTypescript,
+    hasPython,
+    hasWebpack,
+    hasWebAssembly,
+    hasGit,
+    hasCommit,
+    hasPush,
+    hasMongo,
+    hasBranch,
+    hasNode = false;
+
+  for (let i = 0; i < argString.length; i++) {
+    if (argString[i]?.toLowerCase() === 'create') {
+      hasCreate = true;
+    } else if (argString[i]?.toLowerCase() === 'tailwind') {
+      hasTailwind = true;
+    } else if (argString[i]?.toLowerCase() === 'git') {
+      hasGit = true;
+    } else if (argString[i]?.toLowerCase() === 'commit') {
+      hasCommit = true;
+    } else if (argString[i]?.toLowerCase() === 'push') {
+      hasPush = true;
+    } else if (argString[i]?.toLowerCase() === 'branch') {
+      hasBranch = true;
+    }
+  }
+
+  function runCreateModule() {
+    display.log('For creating full apps');
+    for (let i = 0; i < argString.length; i++) {
+      if (argString[i]?.toLowerCase() === 'express') {
+        hasExpress = true;
+      } else if (argString[i]?.toLowerCase() === 'npm') {
+        hasNpm = true;
+      } else if (argString[i]?.toLowerCase() === 'node') {
+        hasNode = true;
+      } else if (argString[i]?.toLowerCase() === 'react') {
+        hasReact = true;
+      } else if (argString[i]?.toLowerCase() === 'next') {
+        hasNext = true;
+      } else if (argString[i]?.toLowerCase() === 'typescript') {
+        hasTypescript = true;
+      } else if (argString[i]?.toLowerCase() === 'javascript') {
+        hasJavascript = true;
+      } else if (argString[i]?.toLowerCase() === 'rust') {
+        hasRust = true;
+      } else if (argString[i]?.toLowerCase() === 'python') {
+        hasPython = true;
+      } else if (argString[i]?.toLowerCase() === 'pip') {
+        hasPip = true;
+      } else if (argString[i]?.toLowerCase() === 'webpack') {
+        hasWebpack = true;
+      } else if (argString[i]?.toLowerCase() === 'mern') {
+        hasMern = true;
+      } else if (argString[i]?.toLowerCase() === 'mongo') {
+        hasMongo = true;
+      } else if (argString[i]?.toLowerCase() === 'webassembly') {
+        hasWebAssembly = true;
+      } else if (argString[i]?.toLowerCase() === 'django') {
+        hasDjango = true;
+      } else if (argString[i]?.toLowerCase() === 'flask') {
+        hasFlask = true;
+      }
+    }
+    if (hasReact) {
+      display.log('react');
+      if (hasTailwind) {
+        display.log('tailwind');
+      }
+    }
+    if (hasNext) {
+      display.log('next');
+      if (hasTailwind) {
+        display.log('tailwind');
+      }
+    }
+    if (hasMern) {
+      display.log('mern');
+      if (hasTailwind) {
+        display.log('tailwind');
+      }
+      if (hasMongo) {
+        display.log('mongo');
+      }
+      if (hasNext) {
+        display.log('next');
+      }
+    }
+    if (hasWebAssembly) {
+      display.log('webassembly');
+      if (hasRust) {
+        display.log('rust');
+      }
+    }
+    if (hasWebpack) {
+      display.log('webpack');
+      if (hasJavascript) {
+        display.log('javascript');
+      }
+      if (hasTypescript) {
+        display.log('typescript');
+      }
+    }
+    if (hasDjango) {
+      display.log('django');
+      if (hasPython) {
+        display.log('python');
+      }
+      if (hasPip) {
+        display.log('pip');
+      }
+      if (hasFlask) {
+        display.log('flask');
+      }
+    }
+  }
+
+  function runGitCommands() {
+    display.log('For committing data over git');
+    for (let i = 0; i < argString.length; i++) {
+      if (argString[i]?.toLowerCase() === 'git') {
+        hasGit = true;
+      } else if (argString[i]?.toLowerCase() === 'commit') {
+        hasCommit = true;
+      } else if (argString[i]?.toLowerCase() === 'push') {
+        hasPush = true;
+      } else if (argString[i]?.toLowerCase() === 'branch') {
+        hasBranch = true;
+      }
+    }
+    if (hasCommit && hasPush && hasBranch) {
+      display.log('git, commit, push and branch');
+    } else if (hasCommit && hasPush) {
+      display.log('git, commit and push');
+    } else if (hasCommit && hasBranch) {
+      display.log('git, commit and branch');
+    } else if (hasPush && hasBranch) {
+      display.log('git, push and branch');
+    } else if (hasCommit) {
+      display.log('git and commit');
+    } else if (hasPush) {
+      display.log('git and push');
+    } else if (hasBranch) {
+      display.log('git and branch');
+    } else {
+      display.log('git');
+    }
+  }
+
+  if (hasCreate) {
+    runCreateModule();
+  }
+
+  if (hasGit || hasCommit || hasPush || hasBranch) {
+    runGitCommands();
+  }
+
+  // check cases
+  // if (hasReact && hasTailwind && hasCreate) {
+  //   display.log('react, tailwind and create');
+  // } else if (hasReact && hasTailwind) {
+  //   display.log('react and tailwind');
+  // } else if (hasReact && hasCreate) {
+  //   display.log('react and create');
+  // } else if (hasTailwind && hasCreate) {
+  //   display.log('tailwind and create');
+  // } else if (hasReact) {
+  //   display.log('react');
+  // } else if (hasTailwind) {
+  //   display.log('tailwind');
+  // } else if (hasCreate) {
+  //   display.log('create');
+  // } else if (hasRust && hasNext && hasMern) {
+  //   display.log('rust, next and mern');
+  // } else if (hasExpress && hasNode) {
+  //   display.log('express and node');
+  // } else if (hasPip && hasDjango) {
+  //   display.log('pip and django');
+  // } else if (hasFlask && hasPython) {
+  //   display.log('flask and python');
+  // } else if (hasNpm && hasJavascript) {
+  //   display.log('npm and javascript');
+  // } else if (hasTypescript && hasJavascript) {
+  //   display.log('typescript and javascript');
+  // } else {
+  //   display.log('No match');
+  // }
+}
