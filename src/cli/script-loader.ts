@@ -1,5 +1,6 @@
 import * as readline from 'readline';
 import { execSync } from 'child_process';
+import { writeFileSync } from 'fs';
 import { display } from '../utils';
 
 export const git = () => {
@@ -54,39 +55,137 @@ export const next = () => {
     output: process.stdout,
   });
 
-  rl.question('Do you want to install nextjs? [y/n]: ', (input: string) => {
-    if (input === 'y') {
-      display.log('Installing nextjs');
-      execSync('npm install next react react-dom');
-      display.log('Creating nextjs project');
-      execSync('npx create-next-app');
-      rl.close();
-    } else {
-      display.log('Please install nextjs manually');
-      rl.close();
-    }
-  });
+  display.log('create-next-app with tailwind template');
+
+  rl.question(
+    'Do you want to proceed with auto-generated or set up manually? [y/n]: ',
+    (input) => {
+      if (input === 'y') {
+        display.log('Proceeding with the automate-setup.');
+        execSync('npx create-next-app --example with-tailwindcss my-app');
+      } else {
+        display.log('Manual set up will begin.');
+        execSync('npx create-next-app my-app');
+        process.chdir('my-app');
+        display.log('tailwindcss template');
+        execSync('npm install -D tailwindcss postcss autoprefixer');
+        execSync('npx tailwindcss init -p');
+        const config = `module.exports = {
+      content: [
+        './app/**/*.{js,ts,jsx,tsx}',
+        './pages/**/*.{js,ts,jsx,tsx}',
+        './components/**/*.{js,ts,jsx,tsx}',
+        './src/**/*.{js,ts,jsx,tsx}',
+      ],
+      theme: {
+        extend: {},
+      },
+      variants: {},
+      plugins: [],
+    };`;
+        const configFileName = 'tailwind.config.js';
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-var-requires
+        const fileDescriptor: unknown = require('fs').openSync(
+          configFileName,
+          'w',
+        );
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-var-requires
+        require('fs').writeSync(fileDescriptor, config);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-var-requires
+        require('fs').closeSync(fileDescriptor);
+        display.log('Add the following to your CSS file:');
+        display.log('@tailwind base;');
+        display.log('@tailwind components;');
+        display.log('@tailwind utilities;');
+      }
+    },
+  );
 };
 
-export const tailwind = () => {
+export const react = () => {
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
   });
 
+  display.log('create-react-app with tailwind template');
+
   rl.question(
-    'Do you want to install tailwindcss? [y/n]: ',
-    (input: string) => {
+    'Do you want to proceed with react-automated-setup or setup react with tailwind manually? [y/n]: ',
+    (input) => {
       if (input === 'y') {
-        display.log('Installing tailwindcss');
-        execSync('npm install tailwindcss');
-        display.log('Creating tailwindcss project');
-        execSync('npx tailwindcss init');
-        rl.close();
+        display.log('Proceeding with the automate-setup.');
+        execSync('npx create-react-app');
       } else {
-        display.log('Please install tailwindcss manually');
-        rl.close();
+        display.log('Manual set up will begin...');
+        execSync('npx create-react-app my-app');
+        process.chdir('my-app');
+        display.log('tailwindcss template');
+        execSync('npm install -D tailwindcss postcss autoprefixer');
+        execSync('npx tailwindcss init -p');
+        const config = `module.exports = {
+      content: [
+        './app/**/*.{js,ts,jsx,tsx}',
+        './pages/**/*.{js,ts,jsx,tsx}',
+        './components/**/*.{js,ts,jsx,tsx}',
+        './src/**/*.{js,ts,jsx,tsx}',
+      ],
+      theme: {
+        extend: {},
+      },
+      variants: {},
+      plugins: [],
+    };`;
+        const configFileName = 'tailwind.config.js';
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-var-requires
+        const fileDescriptor: unknown = require('fs').openSync(
+          configFileName,
+          'w',
+        );
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-var-requires
+        require('fs').writeSync(fileDescriptor, config);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-var-requires
+        require('fs').closeSync(fileDescriptor);
+        display.log('Add the following to your CSS file:');
+        display.log('@tailwind base;');
+        display.log('@tailwind components;');
+        display.log('@tailwind utilities;');
       }
     },
   );
+};
+
+export const tailwind = () => {
+  display.log('tailwindcss template');
+
+  execSync('npm install -D tailwindcss postcss autoprefixer');
+  execSync('npx tailwindcss init -p');
+
+  const configFile = `/**
+ * @type {import('tailwindcss').Config}
+ */
+module.exports = {
+  // can add jit if you want customization
+  // mode: 'jit',
+  content: [
+    './app/**/*.{js,ts,jsx,tsx}',
+    './pages/**/*.{js,ts,jsx,tsx}',
+    './components/**/*.{js,ts,jsx,tsx}',
+
+    // Or if using \`src\` directory:
+    './src/**/*.{js,ts,jsx,tsx}',
+  ],
+  theme: {
+    extend: {},
+  },
+  variants: {},
+  plugins: [],
+};`;
+
+  writeFileSync('tailwind.config.js', configFile, 'utf8');
+
+  display.log('add following to your css file');
+  display.log('@tailwind base;');
+  display.log('@tailwind components;');
+  display.log('@tailwind utilities;');
 };

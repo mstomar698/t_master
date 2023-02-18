@@ -6,7 +6,7 @@ import shell from 'shelljs';
 import parseArgv from 'arg';
 import boxen from 'boxen';
 import { commands, template, display, close } from '../utils';
-import { git, next, tailwind } from './script-loader';
+import { git, next, react, tailwind } from './script-loader';
 import type { Args, DisplayValue, Path } from '../types/static-types';
 import type { Arguments } from '../types/engine-types';
 
@@ -19,48 +19,34 @@ import type { Arguments } from '../types/engine-types';
 export const parseArguments = (): Arguments => parseArgv(commands);
 
 // For ibuilt argument parser
-export const args = process.argv.slice(2);
+export const args: string[] = process.argv.slice(2);
 
 export const getHelpText = (): string => template.helpText;
-
-export function console(Value: DisplayValue) {
-  const consoleDisplay = display.log(
-    boxen(Value, {
-      padding: 1,
-      borderColor: 'green',
-      margin: 1,
-    }),
-  );
-  return consoleDisplay;
-}
 
 export const script = (arg: string) => {
   switch (arg) {
     case 't':
       tailwind();
-      close(0);
       break;
     case 'n':
       next();
-      close(0);
+      break;
+    case 'r':
+      react();
       break;
     case 'g':
       git();
-      close(0);
       break;
     default:
       close(0);
   }
-  // const MainPath: Path = process.env.APPDATA;
-  // display.log(await script(arg1));
-  // const scripString = (await script(arg1)) as string;
-  // shell.exec(scripString);
-  // shell.exec(`bash ./script.sh`)
-  // shell
-  //   .cat(`${MainPath}/npm/node_modules/t_master/build/accessories/gscript.sh`)
-  //   .to('script.sh');
-  // shell.exec('bash https://t-master-mstomar698.vercel.app/tscript.sh');
 };
+
+export function printArgs(...arg: string[]): void {
+  if (arg.length > 0) {
+    display.log(...arg);
+  }
+}
 
 export const copyFile = (arg1: Path, arg2: Args, arg3: Args, arg4: Args) => {
   shell
@@ -85,3 +71,14 @@ export const cliCommand = (
     `${argument1 + argument2 + argument3} has been installed successfully,👍`,
   );
 };
+
+export function console(Value: DisplayValue) {
+  const consoleDisplay = display.log(
+    boxen(Value, {
+      padding: 1,
+      borderColor: 'green',
+      margin: 1,
+    }),
+  );
+  return consoleDisplay;
+}

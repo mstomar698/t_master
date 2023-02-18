@@ -1,18 +1,15 @@
 echo "create-next-app with tailwind template"
-
 read -p "Do you want to proceed with auto genrated or setup manually? [y/n]: " input
-
 if [ "$input" == "y" ]; then
   echo "Proceeding with the automate-setup."
   npx create-next-app --example with-tailwindcss my-app
 else
   echo "manual set up will begin"
-  npx create-react-app my-app
+  npx create-next-app my-app
   cd my-app
   echo "tailwindcss template"
-npm install -D tailwindcss postcss autoprefixer
-npx tailwindcss init -p
-
+  npm install -D tailwindcss postcss autoprefixer
+  npx tailwindcss init -p
 cat << EOF > tailwind.config.js
 /** @type {import('tailwindcss').Config} */
 module.exports = {
