@@ -11,9 +11,15 @@ import {
   gitDefaultBranchCommit,
   gitDefaultCommit,
   gitDefaultPush,
+  mern,
+  mernTailwind,
   next,
+  nextTaiwind,
   react,
+  reactTailwind,
   tailwind,
+  webpack,
+  webpackTailwind,
 } from './script-loader';
 import type { Args, DisplayValue, Path } from '../types/static-types';
 import type { Arguments } from '../types/engine-types';
@@ -93,31 +99,27 @@ export function console(Value: DisplayValue) {
 
 export function wordChecker(argString: string[]) {
   let hasReact: boolean,
-    hasRust: boolean,
+    hasTailwind: boolean,
     hasNext: boolean,
     hasCreate: boolean,
     hasMern: boolean,
-    hasTailwind: boolean,
-    hasExpress: boolean,
-    hasPip: boolean,
-    hasDjango: boolean,
-    hasFlask: boolean,
-    hasNpm: boolean,
-    hasJavascript: boolean,
-    hasTypescript: boolean,
-    hasPython: boolean,
     hasWebpack: boolean,
-    hasWebAssembly: boolean,
     hasGit: boolean,
     hasCommit: boolean,
     hasPush: boolean,
-    hasMongo: boolean,
     hasBranch: boolean,
+    hasNpm: boolean,
+    // hasJavascript: boolean,
+    // hasTypescript: boolean,
     hasNode = false;
 
   for (let i = 0; i < argString.length; i++) {
     if (argString[i]?.toLowerCase() === 'create') {
       hasCreate = true;
+    } else if (argString[i]?.toLowerCase() === 'node') {
+      hasNode = true;
+    } else if (argString[i]?.toLowerCase() === 'npm') {
+      hasNpm = true;
     } else if (argString[i]?.toLowerCase() === 'tailwind') {
       hasTailwind = true;
     } else if (argString[i]?.toLowerCase() === 'git') {
@@ -130,102 +132,65 @@ export function wordChecker(argString: string[]) {
       hasBranch = true;
     }
   }
-
-  if (hasCreate) {
+  const Git = hasGit || hasCommit || hasPush || hasBranch;
+  const Create = hasCreate || hasNode || hasNpm;
+  if (Create) {
     runCreateModule();
   }
 
-  const Git = hasGit || hasCommit || hasPush || hasBranch;
   if (Git) {
     runGitCommands();
   }
 
   function runCreateModule() {
-    display.log('For creating full apps');
+    display.log('For creating full-stack applications');
     for (let i = 0; i < argString.length; i++) {
-      if (argString[i]?.toLowerCase() === 'express') {
-        hasExpress = true;
-      } else if (argString[i]?.toLowerCase() === 'npm') {
-        hasNpm = true;
-      } else if (argString[i]?.toLowerCase() === 'node') {
-        hasNode = true;
-      } else if (argString[i]?.toLowerCase() === 'react') {
+      if (argString[i]?.toLowerCase() === 'react') {
         hasReact = true;
       } else if (argString[i]?.toLowerCase() === 'next') {
         hasNext = true;
-      } else if (argString[i]?.toLowerCase() === 'typescript') {
-        hasTypescript = true;
-      } else if (argString[i]?.toLowerCase() === 'javascript') {
-        hasJavascript = true;
-      } else if (argString[i]?.toLowerCase() === 'rust') {
-        hasRust = true;
-      } else if (argString[i]?.toLowerCase() === 'python') {
-        hasPython = true;
-      } else if (argString[i]?.toLowerCase() === 'pip') {
-        hasPip = true;
       } else if (argString[i]?.toLowerCase() === 'webpack') {
         hasWebpack = true;
       } else if (argString[i]?.toLowerCase() === 'mern') {
         hasMern = true;
-      } else if (argString[i]?.toLowerCase() === 'mongo') {
-        hasMongo = true;
-      } else if (argString[i]?.toLowerCase() === 'webassembly') {
-        hasWebAssembly = true;
       } else if (argString[i]?.toLowerCase() === 'django') {
         hasDjango = true;
-      } else if (argString[i]?.toLowerCase() === 'flask') {
-        hasFlask = true;
       }
     }
     if (hasReact) {
-      display.log('react');
       if (hasTailwind) {
-        display.log('tailwind');
+        display.log('creating tailwind inbuilt react app');
+        reactTailwind();
+      } else {
+        display.log('This will automate create react app procedure');
+        react();
       }
-    }
-    if (hasNext) {
-      display.log('next');
+    } else if (hasNext) {
       if (hasTailwind) {
-        display.log('tailwind');
+        display.log('creating tailwind inbuilt next app');
+        nextTaiwind();
+      } else {
+        display.log('This will automate create next app procedure');
+        next();
       }
-    }
-    if (hasMern) {
-      display.log('mern');
+    } else if (hasMern) {
       if (hasTailwind) {
-        display.log('tailwind');
+        display.log('creating mern template with tailwind inuilt in it');
+        mernTailwind();
+      } else {
+        display.log(
+          'This will automate MERN setup with follwing accessories:\n',
+        );
+        display.log('MongoDb\nExpress\nReact\nNode\n');
+        mern();
       }
-      if (hasMongo) {
-        display.log('mongo');
-      }
-      if (hasNext) {
-        display.log('next');
-      }
-    }
-    if (hasWebAssembly) {
-      display.log('webassembly');
-      if (hasRust) {
-        display.log('rust');
-      }
-    }
-    if (hasWebpack) {
-      display.log('webpack');
-      if (hasJavascript) {
-        display.log('javascript');
-      }
-      if (hasTypescript) {
-        display.log('typescript');
-      }
-    }
-    if (hasDjango) {
-      display.log('django');
-      if (hasPython) {
-        display.log('python');
-      }
-      if (hasPip) {
-        display.log('pip');
-      }
-      if (hasFlask) {
-        display.log('flask');
+    } else if (hasWebpack) {
+      if (hasTailwind) {
+        display.log('creating webpack project tailwind inbuilt in it');
+        webpackTailwind();
+      } else {
+        display.log('Creating a webpack project');
+        webpack();
       }
     }
   }
@@ -264,35 +229,4 @@ export function wordChecker(argString: string[]) {
       shell.exec('git status');
     }
   }
-
-  // check cases
-  // if (hasReact && hasTailwind && hasCreate) {
-  //   display.log('react, tailwind and create');
-  // } else if (hasReact && hasTailwind) {
-  //   display.log('react and tailwind');
-  // } else if (hasReact && hasCreate) {
-  //   display.log('react and create');
-  // } else if (hasTailwind && hasCreate) {
-  //   display.log('tailwind and create');
-  // } else if (hasReact) {
-  //   display.log('react');
-  // } else if (hasTailwind) {
-  //   display.log('tailwind');
-  // } else if (hasCreate) {
-  //   display.log('create');
-  // } else if (hasRust && hasNext && hasMern) {
-  //   display.log('rust, next and mern');
-  // } else if (hasExpress && hasNode) {
-  //   display.log('express and node');
-  // } else if (hasPip && hasDjango) {
-  //   display.log('pip and django');
-  // } else if (hasFlask && hasPython) {
-  //   display.log('flask and python');
-  // } else if (hasNpm && hasJavascript) {
-  //   display.log('npm and javascript');
-  // } else if (hasTypescript && hasJavascript) {
-  //   display.log('typescript and javascript');
-  // } else {
-  //   display.log('No match');
-  // }
 }
