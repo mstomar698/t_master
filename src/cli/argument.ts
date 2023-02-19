@@ -30,17 +30,20 @@ export const argChecker = () => {
     } else if (args[0] === '--nextjs' || args[0] === '-n') {
       script('n');
     } else if (args[0] === '--mern' || args[0] === '-m') {
-      script('n');
+      script('m');
     } else if (args[0] === '--webpack' || args[0] === '-w') {
-      script('n');
+      script('w');
     } else if (args[0] === '--tailwind' || args[0] === '-t') {
       script('t');
+    } else if (args[0] === '-sh') {
+      display.log(getStringHelpText());
+      close(0);
     } else {
       const parsedStringArray: string[] = args[0]?.split(' ') as string[];
       wordChecker(parsedStringArray);
     }
-  } else if (args.length === 2) {
-    if ((args[0] === '--string' && args[1] === '--help') || args[0] === '-sh') {
+  } else if (args.length < 3) {
+    if (args[0] === '--string' && args[1] === '--help') {
       display.log(getStringHelpText());
       close(0);
     }

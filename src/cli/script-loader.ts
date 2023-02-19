@@ -19,10 +19,9 @@ export const git = () => {
       execSync('git add .');
       rl.question('Please enter your commit: ', (commit: string) => {
         execSync(`git commit -m "${commit}"`);
-        rl.close();
       });
       execSync(`git push`);
-      exitScript(0);
+      close(0);
     } else if (input === 'n') {
       display.log('Initializing repository...📚');
       execSync('git init');
@@ -33,20 +32,19 @@ export const git = () => {
           execSync('git add .');
           rl.question('Please enter your commit: ', (commit: string) => {
             execSync(`git commit -m "${commit}"`);
-            rl.close();
-          });
-          rl.question('On which branch to commit: ', (branch: string) => {
+            display.log('to be romved');
             display.info('default branch is master or main');
-            if (branch === '') {
-              // eslint-disable-next-line no-param-reassign
-              branch = 'master';
-              execSync(`git push --set-upstream origin ${branch}`);
-            } else {
-              execSync(`git push --set-upstream origin ${branch}`);
-            }
-            rl.close();
+            rl.question('On which branch to commit: ', (branch: string) => {
+              if (branch === '') {
+                // eslint-disable-next-line no-param-reassign
+                branch = 'master';
+                execSync(`git push --set-upstream origin ${branch}`);
+              } else {
+                execSync(`git push --set-upstream origin ${branch}`);
+              }
+              close(0);
+            });
           });
-          exitScript(0);
         },
       );
     } else {
@@ -65,8 +63,7 @@ export const gitDefaultBranchCommit = () => {
   rl.question('Please enter your commit: ', (commit: string) => {
     execSync(`git commit -m "${commit}"`);
     execSync('git push');
-    exitScript(0);
-    rl.close();
+    close(0);
   });
 };
 
@@ -79,8 +76,7 @@ export const gitDefaultCommit = () => {
   execSync('git add .');
   rl.question('Please enter your commit: ', (commit: string) => {
     execSync(`git commit -m "${commit}"`);
-    exitScript(0);
-    rl.close();
+    close(0);
   });
 };
 
@@ -98,7 +94,7 @@ export const gitDefaultPush = () => {
       display.log(`creating or pushing to ${branch} branch`);
       execSync(`git push --set-upstream origin ${branch}`);
     }
-    exitScript(0);
+
     rl.close();
   });
 };
@@ -117,14 +113,13 @@ export const gitBranch = () => {
         rl.question('Enter branch name: ', (anotherBranch: string) => {
           execSync(`git checkout ${anotherBranch}`);
           rl.close();
-          exitScript(0);
         });
       } else if (branch === 'new' || branch === 'y') {
         rl.question('Enter branch name: ', (newBranch: string) => {
           display.log(`creating new branch  to ${newBranch} branch`);
           execSync(`git checkout -b ${newBranch}`);
           execSync('git branch');
-          exitScript(0);
+
           rl.close();
         });
       }
@@ -164,7 +159,6 @@ module.exports = {
   display.log('@tailwind base;');
   display.log('@tailwind components;');
   display.log('@tailwind utilities;');
-  exitScript(0);
 };
 
 export const next = () => {
@@ -182,7 +176,7 @@ export const next = () => {
           execSync(
             `npx create-next-app --example with-tailwindcss ${projectName}`,
           );
-          exitScript(0);
+          rl.close();
         });
       } else {
         display.log('Manual setup for nextjs will begin...⚒️');
@@ -226,13 +220,13 @@ export const next = () => {
           );
           const nextconfigJson = `
             /** @type {import('next').NextConfig} */
-      const nextConfig = {
-        experimental: {
-          appDir: true,
-        },
-      };
+            const nextConfig = {
+            experimental: {
+            appDir: true,
+           },
+           };
       
-      module.exports = nextConfig;`;
+          module.exports = nextConfig;`;
           fs.writeFileSync(
             path.join(projectName, 'next.config.json'),
             nextconfigJson,
@@ -241,7 +235,7 @@ export const next = () => {
           export default function Page() {
             return <h1>Hello, Next.js!</h1>;
           }
-      `;
+           `;
           fs.writeFileSync(path.join(projectName, 'app', 'page.tsx'), pageTsx);
           const layoutTsx = `
           export default function RootLayout({ children }) {
@@ -251,13 +245,13 @@ export const next = () => {
               </html>
             );
           }
-      `;
+            `;
           fs.writeFileSync(
             path.join(projectName, 'app', 'layout.tsx'),
             layoutTsx,
           );
+          close(0);
         });
-        exitScript(0);
       }
     },
   );
@@ -269,7 +263,7 @@ export const nextTaiwind = () => {
     output: process.stdout,
   });
   display.log('Manual setup for nextjs with tailwind will begin...⚒️');
-  rl.question('enter project name:', (project: string) => {
+  rl.question('Enter project name:', (project: string) => {
     const projectDirectory = `${project}`;
     const projectName = path.join(process.cwd(), projectDirectory);
     if (!fs.existsSync(projectDirectory)) {
@@ -361,8 +355,8 @@ module.exports = nextConfig;`;
     display.log('@tailwind base;');
     display.log('@tailwind components;');
     display.log('@tailwind utilities;');
+    rl.close();
   });
-  exitScript(0);
 };
 
 export const react = () => {
@@ -382,8 +376,8 @@ export const react = () => {
           execSync(
             `npx create-react-app ${projectName} --template cra-template-tailwindcss`,
           );
+          rl.close();
         });
-        exitScript(0);
       } else {
         display.log('Manual setup for react will begin...⚒️');
         rl.question('Enter project name:', (projectName: string) => {
@@ -412,8 +406,8 @@ export const react = () => {
           display.log('@tailwind base;');
           display.log('@tailwind components;');
           display.log('@tailwind utilities;');
+          close(0);
         });
-        exitScript(0);
       }
     },
   );
@@ -452,7 +446,7 @@ plugins: [],
     display.log('@tailwind base;');
     display.log('@tailwind components;');
     display.log('@tailwind utilities;');
-    exitScript(0);
+    rl.close();
   });
 };
 
@@ -536,9 +530,9 @@ export const mern = () => {
                 'Please switch to directory where u want to initiate the project',
               );
             }
+            rl.close();
           },
         );
-        exitScript(0);
       } else {
         display.log('Manual setup for MERN project structure will begin...⚒️');
         rl.question(
@@ -599,15 +593,16 @@ export const mern = () => {
               const packageConfig = `hello mern template`;
               writeFileSync('package.json', packageConfig, 'utf8');
               display.log('Structure with code has been setUp');
-              exitScript(0);
             } else {
               display.warn(
                 'Please switch to directory where u want to initiate the project',
               );
             }
+            rl.close();
           },
         );
       }
+      rl.close();
     },
   );
 };
@@ -662,12 +657,12 @@ export const mernTailwind = () => {
         } catch {
           display.error('Something went wrong ');
         }
-        exitScript(0);
       } else {
         display.warn(
           'Please switch to directory where u want to initiate the project',
         );
       }
+      rl.close();
     },
   );
 };
@@ -803,10 +798,10 @@ module.exports = {
         JSON.stringify(packageJson, null, 2),
       );
 
-      display.log(
+      display.info(
         'Webpack template created successfully! \n  and can be run on http://localhost:9000 \nby running npm run build and npm run start',
       );
-      exitScript(0);
+      rl.close();
     },
   );
 };

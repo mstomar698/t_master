@@ -81,6 +81,7 @@ export function wordChecker(argString: string[]) {
     hasPush: boolean,
     hasBranch: boolean,
     hasNpm: boolean,
+    hasString: boolean,
     hasHelp: boolean,
     hasNode = false;
 
@@ -89,6 +90,8 @@ export function wordChecker(argString: string[]) {
       hasCreate = true;
     } else if (argString[i]?.toLowerCase() === 'help') {
       hasHelp = true;
+    } else if (argString[i]?.toLowerCase() === 'string') {
+      hasString = true;
     } else if (argString[i]?.toLowerCase() === 'node') {
       hasNode = true;
     } else if (argString[i]?.toLowerCase() === 'npm') {
@@ -106,7 +109,11 @@ export function wordChecker(argString: string[]) {
     }
   }
   if (hasHelp) {
-    display.log(getHelpText());
+    if (hasString) {
+      display.log(getStringHelpText());
+    } else {
+      display.log(getHelpText());
+    }
   }
   const Git = hasGit || hasCommit || hasPush || hasBranch;
   const Create = hasCreate || hasNode || hasNpm;
@@ -157,7 +164,6 @@ export function wordChecker(argString: string[]) {
         mern();
       }
     } else if (hasWebpack) {
-      display.log('Creating a webpack project');
       webpack();
     }
   }
