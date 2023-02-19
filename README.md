@@ -109,3 +109,7 @@ t_master - CLI tool to help other tools
 ![nextjs](/accessories/images/-n.png)
 ![reactjs](/accessories/images/-r-t.png)
 ![webpack](/accessories/images/-w.png)
+
+#### code written:
+
+[![wakatime](https://wakatime.com/badge/user/e027a351-bf5f-4bbf-92d6-1037bb62c845/project/3dc49dd2-d3a8-48f2-b7b4-cf25af75ee89.svg)](https://wakatime.com/badge/user/e027a351-bf5f-4bbf-92d6-1037bb62c845/project/3dc49dd2-d3a8-48f2-b7b4-cf25af75ee89)
