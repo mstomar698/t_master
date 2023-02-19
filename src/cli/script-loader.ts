@@ -1,8 +1,8 @@
 import * as readline from 'readline';
+import * as path from 'path';
 import { execSync } from 'child_process';
 import fs, { writeFileSync } from 'fs';
-import * as path from 'path';
-import { close, display } from '../utils';
+import { close, display, exitScript } from '../utils';
 
 export const git = () => {
   const rl = readline.createInterface({
@@ -10,44 +10,49 @@ export const git = () => {
     output: process.stdout,
   });
 
-  display.log('git automation script');
-  display.log('OR you can just commit by pressing "c"');
+  // TODO: add speacial help section for git
+  display.log('Git automation\nsee --help for more info');
 
-  rl.question(
-    'Do you have repo initiatlised? [y/n] || [c]: ',
-    (input: string) => {
-      if (input === 'y') {
-        display.log('Proceeding with the script.');
-        execSync('git add .');
-        rl.question('Please enter your commit: ', (commit: string) => {
-          execSync(`git commit -m "${commit}"`);
-          rl.close();
-        });
-      } else if (input === 'c') {
-        display.log('commiting to current branch');
-        execSync('git add .');
-        rl.question('Please enter your commit: ', (commit: string) => {
-          execSync(`git commit -m "${commit}"`);
-          rl.close();
-        });
-      } else {
-        display.log('Initializing Repo.');
-        execSync('git init');
-        rl.question(
-          'Please enter your repository address: ',
-          (remote: string) => {
-            execSync(`git remote add origin ${remote}`);
-            execSync('git add .');
-            rl.question('Please enter your commit: ', (commit: string) => {
-              execSync(`git commit -m "${commit}"`);
-              execSync('git push --set-upstream origin master');
-              rl.close();
-            });
-          },
-        );
-      }
-    },
-  );
+  rl.question('Do you have repo initiatlised? [y/n]: ', (input: string) => {
+    if (input === 'y') {
+      display.log('Proceeding with the current repository...📖');
+      execSync('git add .');
+      rl.question('Please enter your commit: ', (commit: string) => {
+        execSync(`git commit -m "${commit}"`);
+        rl.close();
+      });
+      execSync(`git push`);
+      exitScript(0);
+    } else if (input === 'n') {
+      display.log('Initializing repository...📚');
+      execSync('git init');
+      rl.question(
+        'Please enter your repository address: ',
+        (remote: string) => {
+          execSync(`git remote add origin ${remote}`);
+          execSync('git add .');
+          rl.question('Please enter your commit: ', (commit: string) => {
+            execSync(`git commit -m "${commit}"`);
+            rl.close();
+          });
+          rl.question('On which branch to commit: ', (branch: string) => {
+            display.info('default branch is master or main');
+            if (branch === '') {
+              // eslint-disable-next-line no-param-reassign
+              branch = 'master';
+              execSync(`git push --set-upstream origin ${branch}`);
+            } else {
+              execSync(`git push --set-upstream origin ${branch}`);
+            }
+            rl.close();
+          });
+          exitScript(0);
+        },
+      );
+    } else {
+      exitScript(1);
+    }
+  });
 };
 
 export const gitDefaultBranchCommit = () => {
@@ -60,6 +65,7 @@ export const gitDefaultBranchCommit = () => {
   rl.question('Please enter your commit: ', (commit: string) => {
     execSync(`git commit -m "${commit}"`);
     execSync('git push');
+    exitScript(0);
     rl.close();
   });
 };
@@ -73,6 +79,7 @@ export const gitDefaultCommit = () => {
   execSync('git add .');
   rl.question('Please enter your commit: ', (commit: string) => {
     execSync(`git commit -m "${commit}"`);
+    exitScript(0);
     rl.close();
   });
 };
@@ -82,8 +89,8 @@ export const gitDefaultPush = () => {
     input: process.stdin,
     output: process.stdout,
   });
-  display.log('give branch if new branch or for first push to default branch');
-  rl.question('on which to commit: ', (branch: string) => {
+  display.info('Give branch if new branch or For first push to default branch');
+  rl.question('On which branch to commit: ', (branch: string) => {
     if (branch === '') {
       display.log('commiting to default branch');
       execSync(`git push`);
@@ -91,6 +98,7 @@ export const gitDefaultPush = () => {
       display.log(`creating or pushing to ${branch} branch`);
       execSync(`git push --set-upstream origin ${branch}`);
     }
+    exitScript(0);
     rl.close();
   });
 };
@@ -100,7 +108,7 @@ export const gitBranch = () => {
     input: process.stdin,
     output: process.stdout,
   });
-  display.log('give branch name to switch or create new one');
+  display.info('Give branch name to switch or Create new one');
   rl.question(
     'Create new branch or switch to another one: ',
     (branch: string) => {
@@ -109,12 +117,14 @@ export const gitBranch = () => {
         rl.question('Enter branch name: ', (anotherBranch: string) => {
           execSync(`git checkout ${anotherBranch}`);
           rl.close();
+          exitScript(0);
         });
       } else if (branch === 'new' || branch === 'y') {
         rl.question('Enter branch name: ', (newBranch: string) => {
           display.log(`creating new branch  to ${newBranch} branch`);
           execSync(`git checkout -b ${newBranch}`);
           execSync('git branch');
+          exitScript(0);
           rl.close();
         });
       }
@@ -124,11 +134,9 @@ export const gitBranch = () => {
 };
 
 export const tailwind = () => {
-  display.log('tailwindcss template');
-
+  display.log('Adding tailwindcss to your project...📦');
   execSync('npm install -D tailwindcss postcss autoprefixer');
   execSync('npx tailwindcss init -p');
-
   const configFile = `/**
  * @type {import('tailwindcss').Config}
  */
@@ -152,10 +160,11 @@ module.exports = {
 
   writeFileSync('tailwind.config.js', configFile, 'utf8');
 
-  display.log('add following to your css file');
+  display.info('Add following to your css file');
   display.log('@tailwind base;');
   display.log('@tailwind components;');
   display.log('@tailwind utilities;');
+  exitScript(0);
 };
 
 export const next = () => {
@@ -163,20 +172,21 @@ export const next = () => {
     input: process.stdin,
     output: process.stdout,
   });
-  display.log('create-next-app with tailwind template');
+  display.log('Creating nextjs project...📦');
   rl.question(
-    'Do you want to proceed with auto-generated or set up manually? [y/n]: ',
+    'Do you want to proceed with auto-generated project or setIt up manually? [y/n]: ',
     (input) => {
       if (input === 'y') {
-        display.log('Proceeding with the automate-setup.');
+        display.log('Proceeding with the automatic-setup...⚙️');
         rl.question('enter project name:', (projectName: string) => {
           execSync(
             `npx create-next-app --example with-tailwindcss ${projectName}`,
           );
+          exitScript(0);
         });
       } else {
-        display.log('Manual setup for nextjs will begin.');
-        rl.question('enter project name:', (project: string) => {
+        display.log('Manual setup for nextjs will begin...⚒️');
+        rl.question('Enter project name:', (project: string) => {
           const projectDirectory = `${project}`;
           const projectName = path.join(process.cwd(), projectDirectory);
           if (!fs.existsSync(projectDirectory)) {
@@ -190,7 +200,7 @@ export const next = () => {
             `cd ${projectName} && npm install next@latest react@latest react-dom@latest eslint-config-next@latest`,
           );
           const packageJson = {
-            name: 'new-folder',
+            name: projectName,
             version: '1.0.0',
             description: '',
             main: 'index.js',
@@ -247,6 +257,7 @@ export const next = () => {
             layoutTsx,
           );
         });
+        exitScript(0);
       }
     },
   );
@@ -257,7 +268,7 @@ export const nextTaiwind = () => {
     input: process.stdin,
     output: process.stdout,
   });
-  display.log('Manual setup for next will begin...');
+  display.log('Manual setup for nextjs with tailwind will begin...⚒️');
   rl.question('enter project name:', (project: string) => {
     const projectDirectory = `${project}`;
     const projectName = path.join(process.cwd(), projectDirectory);
@@ -351,6 +362,7 @@ module.exports = nextConfig;`;
     display.log('@tailwind components;');
     display.log('@tailwind utilities;');
   });
+  exitScript(0);
 };
 
 export const react = () => {
@@ -359,25 +371,26 @@ export const react = () => {
     output: process.stdout,
   });
 
-  display.log('create-react-app template');
+  display.log('Creating react project...🚀');
 
   rl.question(
     'Do you want to proceed with react-automated-setup or setup react with tailwind manually? [y/n]: ',
     (input) => {
       if (input === 'y') {
-        display.log('Proceeding with the automate-setup.');
-        rl.question('enter project name:', (projectName: string) => {
+        display.log('Proceeding with the automatic setup...⚙️');
+        rl.question('Enter project name:', (projectName: string) => {
           execSync(
             `npx create-react-app ${projectName} --template cra-template-tailwindcss`,
           );
         });
+        exitScript(0);
       } else {
-        display.log('Manual setup for react will begin...');
-        rl.question('enter project name:', (projectName: string) => {
+        display.log('Manual setup for react will begin...⚒️');
+        rl.question('Enter project name:', (projectName: string) => {
           execSync(`npx create-react-app ${projectName}`);
           process.chdir(`${projectName}`);
 
-          display.log('Adding Tailwind to created creat app');
+          display.log('Adding Tailwind to created creat app...🚀');
           execSync('npm install -D tailwindcss postcss autoprefixer');
           execSync('npx tailwindcss init -p');
           const configFile = `module.exports = {
@@ -400,6 +413,7 @@ export const react = () => {
           display.log('@tailwind components;');
           display.log('@tailwind utilities;');
         });
+        exitScript(0);
       }
     },
   );
@@ -411,12 +425,12 @@ export const reactTailwind = () => {
     output: process.stdout,
   });
 
-  display.log('Manual setup for react will begin...');
-  rl.question('enter project name:', (projectName: string) => {
+  display.log('Manual setup for react with tailwind will begin...⚒️');
+  rl.question('Enter project name:', (projectName: string) => {
     execSync(`npx create-react-app ${projectName}`);
     process.chdir(`${projectName}`);
 
-    display.log('Adding Tailwind to created react app');
+    display.log('Adding Tailwind to created react app...🚀');
     execSync('npm install -D tailwindcss postcss autoprefixer');
     execSync('npx tailwindcss init -p');
     const configFile = `module.exports = {
@@ -438,6 +452,7 @@ plugins: [],
     display.log('@tailwind base;');
     display.log('@tailwind components;');
     display.log('@tailwind utilities;');
+    exitScript(0);
   });
 };
 
@@ -446,7 +461,7 @@ export const mern = () => {
     input: process.stdin,
     output: process.stdout,
   });
-  display.log('mern project structure template');
+  display.log('Creating MERN project structure...🚀');
   rl.question(
     'The default file structure will be \n1: client \n2: server\n Do you want to continue? [y/n]: ',
     (input) => {
@@ -512,19 +527,20 @@ export const mern = () => {
               // Create the folder structure for the MERN application
               createFolderStructure(FOLDER_STRUCTURE, ROOT_FOLDER);
               // Install the dependencies for the MERN application
-              display.log(
+              display.info(
                 'All file structure has been setUp you can now set up libraries as per preference',
               );
               close(0);
             } else {
-              display.log(
+              display.warn(
                 'Please switch to directory where u want to initiate the project',
               );
             }
           },
         );
+        exitScript(0);
       } else {
-        display.log('Manual setup for MERN app will begin...');
+        display.log('Manual setup for MERN project structure will begin...⚒️');
         rl.question(
           'The Project will created in current pwd. Do you still want to continue [y/n]: ',
           (binary: string) => {
@@ -583,9 +599,9 @@ export const mern = () => {
               const packageConfig = `hello mern template`;
               writeFileSync('package.json', packageConfig, 'utf8');
               display.log('Structure with code has been setUp');
-              close(0);
+              exitScript(0);
             } else {
-              display.log(
+              display.warn(
                 'Please switch to directory where u want to initiate the project',
               );
             }
@@ -644,11 +660,11 @@ export const mernTailwind = () => {
           );
           display.log(`${backendLibName} is ready to be served`);
         } catch {
-          display.error('Something wen wrong ');
+          display.error('Something went wrong ');
         }
-        close(0);
+        exitScript(0);
       } else {
-        display.log(
+        display.warn(
           'Please switch to directory where u want to initiate the project',
         );
       }
@@ -661,7 +677,7 @@ export const webpack = () => {
     input: process.stdin,
     output: process.stdout,
   });
-  display.log('To create webpack project template');
+  display.log('Creating a webpack project...🚀');
   rl.question(
     'The Directory where project shall be initialized:',
     (directory: string) => {
@@ -790,7 +806,7 @@ module.exports = {
       display.log(
         'Webpack template created successfully! \n  and can be run on http://localhost:9000 \nby running npm run build and npm run start',
       );
-      close(0);
+      exitScript(0);
     },
   );
 };

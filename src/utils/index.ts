@@ -1,6 +1,6 @@
 export { display } from './display';
-export { close } from './close';
+// eslint-disable-next-line import/no-cycle
+export { exitScript, close } from './close';
 export { template } from './text-templates';
-export { commands } from './commands';
 export { promise } from './promise';
 export { script } from './scripts';

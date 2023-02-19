@@ -1,11 +1,8 @@
 // engine
 
-// import { env } from 'node:process';
-// import chalk from 'chalk';
 import shell from 'shelljs';
-import parseArgv from 'arg';
 import boxen from 'boxen';
-import { commands, template, display, close } from '../utils';
+import { template, display, exitScript } from '../utils';
 import {
   git,
   gitDefaultBranchCommit,
@@ -19,40 +16,39 @@ import {
   reactTailwind,
   tailwind,
   webpack,
-  webpackTailwind,
 } from './script-loader';
-import type { Args, DisplayValue, Path } from '../types/static-types';
-import type { Arguments } from '../types/engine-types';
-
-// For arg library
-/**
- * Parses the program's `process.argv` and returns the options and arguments.
- *
- * @returns The parsed options and arguments.
- */
-export const parseArguments = (): Arguments => parseArgv(commands);
+import type { DisplayValue } from '../types/static-types';
 
 // For ibuilt argument parser
 export const args: string[] = process.argv.slice(2);
 
 export const getHelpText = (): string => template.helpText;
 
+// eslint-disable-next-line @typescript-eslint/no-unsafe-return
+export const getStringHelpText = (): string => template.stringHelpText;
+
 export const script = (arg: string) => {
   switch (arg) {
-    case 't':
-      tailwind();
-      break;
-    case 'n':
-      next();
+    case 'g':
+      git();
       break;
     case 'r':
       react();
       break;
-    case 'g':
-      git();
+    case 'n':
+      next();
+      break;
+    case 'm':
+      mern();
+      break;
+    case 'w':
+      webpack();
+      break;
+    case 't':
+      tailwind();
       break;
     default:
-      close(0);
+      exitScript(1);
   }
 };
 
@@ -61,30 +57,6 @@ export function printArgs(...arg: string[]): void {
     display.log(...arg);
   }
 }
-
-export const copyFile = (arg1: Path, arg2: Args, arg3: Args, arg4: Args) => {
-  shell
-    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-    .cat(`${arg1}/npm/node_modules/t_master/build/accessories/${arg2}`)
-    .to(`${arg3}`);
-  display.log(`${arg4} has been created successfully,👍`);
-};
-
-export const npmInstaller = (arg1: Args, arg2: Args) => {
-  shell.exec(`npm install ${arg1} ${arg2}`);
-  display.log(`${arg1 + arg2} has been installed successfully,👍`);
-};
-
-export const cliCommand = (
-  argument1: Args,
-  argument2: Args,
-  argument3: Args,
-) => {
-  shell.exec(`${argument1} ${argument2} ${argument3}`);
-  display.log(
-    `${argument1 + argument2 + argument3} has been installed successfully,👍`,
-  );
-};
 
 export function console(Value: DisplayValue) {
   const consoleDisplay = display.log(
@@ -109,13 +81,14 @@ export function wordChecker(argString: string[]) {
     hasPush: boolean,
     hasBranch: boolean,
     hasNpm: boolean,
-    // hasJavascript: boolean,
-    // hasTypescript: boolean,
+    hasHelp: boolean,
     hasNode = false;
 
   for (let i = 0; i < argString.length; i++) {
     if (argString[i]?.toLowerCase() === 'create') {
       hasCreate = true;
+    } else if (argString[i]?.toLowerCase() === 'help') {
+      hasHelp = true;
     } else if (argString[i]?.toLowerCase() === 'node') {
       hasNode = true;
     } else if (argString[i]?.toLowerCase() === 'npm') {
@@ -132,18 +105,19 @@ export function wordChecker(argString: string[]) {
       hasBranch = true;
     }
   }
+  if (hasHelp) {
+    display.log(getHelpText());
+  }
   const Git = hasGit || hasCommit || hasPush || hasBranch;
   const Create = hasCreate || hasNode || hasNpm;
   if (Create) {
     runCreateModule();
   }
-
   if (Git) {
     runGitCommands();
   }
 
   function runCreateModule() {
-    display.log('For creating full-stack applications');
     for (let i = 0; i < argString.length; i++) {
       if (argString[i]?.toLowerCase() === 'react') {
         hasReact = true;
@@ -153,8 +127,6 @@ export function wordChecker(argString: string[]) {
         hasWebpack = true;
       } else if (argString[i]?.toLowerCase() === 'mern') {
         hasMern = true;
-      } else if (argString[i]?.toLowerCase() === 'django') {
-        hasDjango = true;
       }
     }
     if (hasReact) {

@@ -17,3 +17,4 @@ const error = (...message: string[]) => {
 const log = console.log;
 
 export const display = { info, warn, error, log };
+
