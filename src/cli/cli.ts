@@ -185,13 +185,8 @@ export function wordChecker(argString: string[]) {
         mern();
       }
     } else if (hasWebpack) {
-      if (hasTailwind) {
-        display.log('creating webpack project tailwind inbuilt in it');
-        webpackTailwind();
-      } else {
-        display.log('Creating a webpack project');
-        webpack();
-      }
+      display.log('Creating a webpack project');
+      webpack();
     }
   }
 

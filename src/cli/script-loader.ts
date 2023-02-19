@@ -1,6 +1,7 @@
 import * as readline from 'readline';
 import { execSync } from 'child_process';
 import fs, { writeFileSync } from 'fs';
+import * as path from 'path';
 import { close, display } from '../utils';
 
 export const git = () => {
@@ -162,9 +163,7 @@ export const next = () => {
     input: process.stdin,
     output: process.stdout,
   });
-
   display.log('create-next-app with tailwind template');
-
   rl.question(
     'Do you want to proceed with auto-generated or set up manually? [y/n]: ',
     (input) => {
@@ -177,40 +176,76 @@ export const next = () => {
         });
       } else {
         display.log('Manual setup for nextjs will begin.');
-        rl.question('enter project name:', (projectName: string) => {
-          execSync(`npx create-next-app ${projectName}`);
-          process.chdir(`${projectName}`);
-
-          display.log('Adding tailwindcss to the next app');
-          execSync('npm install -D tailwindcss postcss autoprefixer');
-          execSync('npx tailwindcss init -p');
-          const config = `module.exports = {
-      content: [
-        './app/**/*.{js,ts,jsx,tsx}',
-        './pages/**/*.{js,ts,jsx,tsx}',
-        './components/**/*.{js,ts,jsx,tsx}',
-        './src/**/*.{js,ts,jsx,tsx}',
-      ],
-      theme: {
-        extend: {},
-      },
-      variants: {},
-      plugins: [],
-    };`;
-          const configFileName = 'tailwind.config.js';
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-var-requires
-          const fileDescriptor: unknown = require('fs').openSync(
-            configFileName,
-            'w',
+        rl.question('enter project name:', (project: string) => {
+          const projectDirectory = `${project}`;
+          const projectName = path.join(process.cwd(), projectDirectory);
+          if (!fs.existsSync(projectDirectory)) {
+            fs.mkdirSync(projectDirectory);
+          }
+          execSync(`cd ${projectName} && npm init -y`);
+          if (!fs.existsSync(`${projectName}/app`)) {
+            fs.mkdirSync(`${projectName}/app`);
+          }
+          execSync(
+            `cd ${projectName} && npm install next@latest react@latest react-dom@latest eslint-config-next@latest`,
           );
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-var-requires
-          require('fs').writeSync(fileDescriptor, config);
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-var-requires
-          require('fs').closeSync(fileDescriptor);
-          display.log('Add the following to your CSS file:');
-          display.log('@tailwind base;');
-          display.log('@tailwind components;');
-          display.log('@tailwind utilities;');
+          const packageJson = {
+            name: 'new-folder',
+            version: '1.0.0',
+            description: '',
+            main: 'index.js',
+            scripts: {
+              dev: 'next dev',
+              build: 'next build',
+              start: 'next start',
+              lint: 'next lint',
+            },
+            keywords: [],
+            author: 'mstomar698',
+            license: 'ISC',
+            dependencies: {
+              'eslint-config-next': '^13.1.6',
+              next: '^13.1.6',
+              react: '^18.2.0',
+              'react-dom': '^18.2.0',
+            },
+          };
+          fs.writeFileSync(
+            path.join(projectName, 'package.json'),
+            JSON.stringify(packageJson, null, 2),
+          );
+          const nextconfigJson = `
+            /** @type {import('next').NextConfig} */
+      const nextConfig = {
+        experimental: {
+          appDir: true,
+        },
+      };
+      
+      module.exports = nextConfig;`;
+          fs.writeFileSync(
+            path.join(projectName, 'next.config.json'),
+            nextconfigJson,
+          );
+          const pageTsx = `
+          export default function Page() {
+            return <h1>Hello, Next.js!</h1>;
+          }
+      `;
+          fs.writeFileSync(path.join(projectName, 'app', 'page.tsx'), pageTsx);
+          const layoutTsx = `
+          export default function RootLayout({ children }) {
+            return (
+              <html lang="en">
+                <body>{children}</body>
+              </html>
+            );
+          }
+      `;
+          fs.writeFileSync(
+            path.join(projectName, 'app', 'layout.tsx'),
+            layoutTsx,
+          );
         });
       }
     },
@@ -222,35 +257,95 @@ export const nextTaiwind = () => {
     input: process.stdin,
     output: process.stdout,
   });
-
   display.log('Manual setup for next will begin...');
-  rl.question('enter project name:', (projectName: string) => {
-    execSync(`npx create-next-app ${projectName}`);
-    process.chdir(`${projectName}`);
+  rl.question('enter project name:', (project: string) => {
+    const projectDirectory = `${project}`;
+    const projectName = path.join(process.cwd(), projectDirectory);
+    if (!fs.existsSync(projectDirectory)) {
+      fs.mkdirSync(projectDirectory);
+    }
+    execSync(`cd ${projectName} && npm init -y`);
+    if (!fs.existsSync(`${projectName}/app`)) {
+      fs.mkdirSync(`${projectName}/app`);
+    }
+    execSync(
+      `cd ${projectName} && npm install next@latest react@latest react-dom@latest eslint-config-next@latest`,
+    );
+    const packageJson = {
+      name: 'new-folder',
+      version: '1.0.0',
+      description: '',
+      main: 'index.js',
+      scripts: {
+        dev: 'next dev',
+        build: 'next build',
+        start: 'next start',
+        lint: 'next lint',
+      },
+      keywords: [],
+      author: 'mstomar698',
+      license: 'ISC',
+      dependencies: {
+        'eslint-config-next': '^13.1.6',
+        next: '^13.1.6',
+        react: '^18.2.0',
+        'react-dom': '^18.2.0',
+      },
+    };
+    fs.writeFileSync(
+      path.join(projectName, 'package.json'),
+      JSON.stringify(packageJson, null, 2),
+    );
+    const nextconfigJson = `
+      /** @type {import('next').NextConfig} */
+const nextConfig = {
+  experimental: {
+    appDir: true,
+  },
+};
+
+module.exports = nextConfig;`;
+    fs.writeFileSync(
+      path.join(projectName, 'next.config.json'),
+      nextconfigJson,
+    );
+    const pageTsx = `
+    export default function Page() {
+      return <h1>Hello, Next.js!</h1>;
+    }
+`;
+    fs.writeFileSync(path.join(projectName, 'app', 'page.tsx'), pageTsx);
+    const layoutTsx = `
+    export default function RootLayout({ children }) {
+      return (
+        <html lang="en">
+          <body>{children}</body>
+        </html>
+      );
+    }
+`;
+    fs.writeFileSync(path.join(projectName, 'app', 'layout.tsx'), layoutTsx);
 
     display.log('Adding Tailwind to created next app');
-    execSync('npm install -D tailwindcss postcss autoprefixer');
-    execSync('npx tailwindcss init -p');
-    const config = `module.exports = {
-content: [
-  './app/**/*.{js,ts,jsx,tsx}',
-  './pages/**/*.{js,ts,jsx,tsx}',
-  './components/**/*.{js,ts,jsx,tsx}',
-  './src/**/*.{js,ts,jsx,tsx}',
-],
-theme: {
-  extend: {},
-},
-variants: {},
-plugins: [],
-};`;
-    const configFileName = 'tailwind.config.js';
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-var-requires
-    const fileDescriptor: unknown = require('fs').openSync(configFileName, 'w');
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-var-requires
-    require('fs').writeSync(fileDescriptor, config);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-var-requires
-    require('fs').closeSync(fileDescriptor);
+    execSync(
+      `cd ${projectName} && npm install -D tailwindcss postcss autoprefixer`,
+    );
+    execSync(`cd ${projectName} && npx tailwindcss init -p`);
+    const configFile = `module.exports = {
+    content: [
+      './app/**/*.{js,ts,jsx,tsx}',
+      './pages/**/*.{js,ts,jsx,tsx}',
+      './components/**/*.{js,ts,jsx,tsx}',
+      './src/**/*.{js,ts,jsx,tsx}',
+    ],
+    theme: {
+      extend: {},
+    },
+    variants: {},
+    plugins: [],
+    };`;
+
+    writeFileSync('tailwind.config.js', configFile, 'utf8');
     display.log('Add the following to your CSS file:');
     display.log('@tailwind base;');
     display.log('@tailwind components;');
@@ -285,7 +380,7 @@ export const react = () => {
           display.log('Adding Tailwind to created creat app');
           execSync('npm install -D tailwindcss postcss autoprefixer');
           execSync('npx tailwindcss init -p');
-          const config = `module.exports = {
+          const configFile = `module.exports = {
       content: [
         './app/**/*.{js,ts,jsx,tsx}',
         './pages/**/*.{js,ts,jsx,tsx}',
@@ -298,16 +393,8 @@ export const react = () => {
       variants: {},
       plugins: [],
     };`;
-          const configFileName = 'tailwind.config.js';
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-var-requires
-          const fileDescriptor: unknown = require('fs').openSync(
-            configFileName,
-            'w',
-          );
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-var-requires
-          require('fs').writeSync(fileDescriptor, config);
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-var-requires
-          require('fs').closeSync(fileDescriptor);
+          writeFileSync('tailwind.config.js', configFile, 'utf8');
+
           display.log('Add the following to your CSS file:');
           display.log('@tailwind base;');
           display.log('@tailwind components;');
@@ -332,7 +419,7 @@ export const reactTailwind = () => {
     display.log('Adding Tailwind to created react app');
     execSync('npm install -D tailwindcss postcss autoprefixer');
     execSync('npx tailwindcss init -p');
-    const config = `module.exports = {
+    const configFile = `module.exports = {
 content: [
   './app/**/*.{js,ts,jsx,tsx}',
   './pages/**/*.{js,ts,jsx,tsx}',
@@ -345,13 +432,8 @@ theme: {
 variants: {},
 plugins: [],
 };`;
-    const configFileName = 'tailwind.config.js';
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-var-requires
-    const fileDescriptor: unknown = require('fs').openSync(configFileName, 'w');
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-var-requires
-    require('fs').writeSync(fileDescriptor, config);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-var-requires
-    require('fs').closeSync(fileDescriptor);
+    writeFileSync('tailwind.config.js', configFile, 'utf8');
+
     display.log('Add the following to your CSS file:');
     display.log('@tailwind base;');
     display.log('@tailwind components;');
@@ -418,12 +500,12 @@ export const mern = () => {
               ) => {
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                 Object.entries(structure).forEach(([name, content]) => {
-                  const path = `${parentPath}/${name}`;
+                  const pathFile = `${parentPath}/${name}`;
                   if (typeof content === 'string') {
-                    fs.writeFileSync(path, content);
+                    fs.writeFileSync(pathFile, content);
                   } else {
-                    fs.mkdirSync(path);
-                    createFolderStructure(content, path);
+                    fs.mkdirSync(pathFile);
+                    createFolderStructure(content, pathFile);
                   }
                 });
               };
@@ -488,12 +570,12 @@ export const mern = () => {
               ) => {
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                 Object.entries(structure).forEach(([name, content]) => {
-                  const path = `${parentPath}/${name}`;
+                  const pathFile = `${parentPath}/${name}`;
                   if (typeof content === 'string') {
-                    fs.writeFileSync(path, content);
+                    fs.writeFileSync(pathFile, content);
                   } else {
-                    fs.mkdirSync(path);
-                    createFolderStructure(content, path);
+                    fs.mkdirSync(pathFile);
+                    createFolderStructure(content, pathFile);
                   }
                 });
               };
@@ -575,9 +657,140 @@ export const mernTailwind = () => {
 };
 
 export const webpack = () => {
-  display.log('webpack template');
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+  display.log('To create webpack project template');
+  rl.question(
+    'The Directory where project shall be initialized:',
+    (directory: string) => {
+      const projectName = `${directory}`;
+      const projectDirectory = path.join(process.cwd(), projectName);
+      if (!fs.existsSync(projectDirectory)) {
+        fs.mkdirSync(projectDirectory);
+      }
+      const webPackInstallation =
+        'npm install webpack webpack-cli typescript ts-loader --save-dev';
+      const reactInstallation =
+        'npm install react react-dom @types/react @types/react-dom --save';
+      execSync(`cd ${projectDirectory} && npm init -y`);
+      if (!fs.existsSync(`${projectDirectory}/src`)) {
+        fs.mkdirSync(`${projectDirectory}/src`);
+      }
+      execSync(`cd ${projectDirectory} && npm install ${webPackInstallation}}`);
+      execSync(`cd ${projectDirectory} && npm install ${reactInstallation}}`);
+      // Create tsconfig.json file
+      const tsconfigJson = {
+        compilerOptions: {
+          outDir: './dist/',
+          sourceMap: true,
+          strict: true,
+          module: 'es6',
+          target: 'es5',
+          jsx: 'react',
+        },
+      };
+      fs.writeFileSync(
+        path.join(projectDirectory, 'tsconfig.json'),
+        JSON.stringify(tsconfigJson, null, 2),
+      );
+      // Create index.html file
+      const indexHtml = `
+      <!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Webpack App</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script src="./dist/bundle.js"></script>
+  </body>
+</html>
+      `;
+      fs.writeFileSync(
+        path.join(projectDirectory, 'src', 'index.html'),
+        indexHtml,
+      );
+      // Create index.ts file
+      const indexTs = `
+          import React from 'react';
+          import ReactDOM from 'react-dom';
+          
+          ReactDOM.render(
+            <h1>Hello, World!</h1>,
+            document.getElementById('root')
+          );
+      `;
+      fs.writeFileSync(path.join(projectDirectory, 'src', 'index.ts'), indexTs);
+      // Create webpack.config.js file
+      const webpackConfig = `
+        const path = require('path');
+module.exports = {
+  entry: './src/index.tsx',
+  module: {
+    rules: [
+      {
+        test: /\\.tsx?$/,
+        use: 'ts-loader',
+        exclude: /node_modules/,
+      },
+    ],
+  },
+  resolve: {
+    extensions: ['.tsx', '.ts', '.js'],
+  },
+  output: {
+    filename: 'bundle.js',
+    path: path.resolve(__dirname, 'dist'),
+  },
+  devServer: {
+    contentBase: path.join(__dirname, 'public'),
+    compress: true,
+    port: 9000,
+  },
 };
+      };`;
+      fs.writeFileSync(
+        path.join(projectDirectory, 'webpack.config.js'),
+        webpackConfig,
+      );
+      // Create package.json file
+      const packageJson = {
+        name: projectName,
+        version: '1.0.0',
+        description: '',
+        main: 'index.tsx',
+        scripts: {
+          start: 'webpack serve --mode development',
+          build: 'webpack --mode production',
+        },
+        keywords: [],
+        author: 'mstomar698',
+        license: 'ISC',
+        dependencies: {
+          '@types/react': '^18.0.28',
+          '@types/react-dom': '^18.0.11',
+          install: '^0.13.0',
+          npm: '^9.5.0',
+          react: '^18.2.0',
+          'react-dom': '^18.2.0',
+          'ts-loader': '^9.4.2',
+          typescript: '^4.9.5',
+          webpack: '^5.75.0',
+          'webpack-cli': '^5.0.1',
+        },
+      };
+      fs.writeFileSync(
+        path.join(projectDirectory, 'package.json'),
+        JSON.stringify(packageJson, null, 2),
+      );
 
-export const webpackTailwind = () => {
-  display.log('webpack Tailwind template');
+      display.log(
+        'Webpack template created successfully! \n  and can be run on http://localhost:9000 \nby running npm run build and npm run start',
+      );
+      close(0);
+    },
+  );
 };
