@@ -24,7 +24,6 @@ export const args: string[] = process.argv.slice(2);
 
 export const getHelpText = (): string => template.helpText;
 
-// eslint-disable-next-line @typescript-eslint/no-unsafe-return
 export const getStringHelpText = (): string => template.stringHelpText;
 
 export const script = (arg: string) => {
