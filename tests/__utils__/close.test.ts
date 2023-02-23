@@ -1,9 +1,3 @@
-// eslint-disable-next-line eslint-comments/disable-enable-pair
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-// eslint-disable-next-line eslint-comments/disable-enable-pair
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-// eslint-disable-next-line eslint-comments/disable-enable-pair
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { ok } from 'assert';
 import { it, test } from 'vitest';
 import { spy } from 'sinon';
