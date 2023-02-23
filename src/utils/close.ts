@@ -1,7 +1,6 @@
 // code exiting the cli
 
 import { exit } from 'shelljs';
-// eslint-disable-next-line import/no-cycle
 import { console } from '../cli/cli';
 import { display } from './display';
 
